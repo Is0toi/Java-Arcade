@@ -72,7 +72,7 @@ public class Board extends JPanel {
 
             // update the board w/ all remaining blocks from top to bottom
             for (int row = 0; row < 4; row++) {
-                board[row][col].setValue(merged.get(row).getValue();
+                board[row][col].setValue(merged.get(row).getValue());
             }
         }
     }
@@ -217,4 +217,6 @@ public class Board extends JPanel {
     public boolean hasLost() {
         return !canMove;
     }
+
+    
 }

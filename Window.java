@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Window extends JPanel implements JavaArcade, MouseListener {
+public class Window extends JFrame implements JavaArcade, MouseListener, KeyListener {
     private Board board;
     private JPanel boardPanel;
     private String name = "2048 CATS";
@@ -21,11 +21,15 @@ public class Window extends JPanel implements JavaArcade, MouseListener {
      * your game is in a "paused" state or "stopped" or "unstarted"
      */
 
-    public Window()
-    {
-            setTitle("2048 CATS");
+    public Window() {
+        super("CATS 2048");
+        JavaArcade game = new UserPanel(600, 450);
+        board = new Board();
+        
 
-        }
+
+
+    }
 
         public boolean running() {
             // if (START.BUTTON)
@@ -144,7 +148,6 @@ public class Window extends JPanel implements JavaArcade, MouseListener {
              * add(txtfld);
              */
 
-            frame.paintComponent(panel);
-
+            frame.add(panel);
         }
 }
