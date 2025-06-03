@@ -26,9 +26,6 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
         JavaArcade game = new UserPanel(600, 450);
         board = new Board();
         
-
-
-
     }
 
         public boolean running() {
@@ -150,4 +147,14 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
 
             frame.add(panel);
         }
+
+        public void mouseClicked(MouseEvent e) {}
+        public void mousePressed(MouseEvent e) {}
+        public void mouseReleased(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {}
+
+        public void keyPressed(KeyEvent e) {}
+        public void keyReleased(KeyEvent e) {}
+        public void keyTyped(KeyEvent e) {}
 }

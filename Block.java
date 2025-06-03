@@ -23,6 +23,7 @@ public class Block extends JPanel {
     //when blocks combine, doubles the value by 2
     public int doubleValue() {
         value *= 2;
+        return value;
     }
 
     //if the value of a block is 0, then the block is empty (there is no block)
