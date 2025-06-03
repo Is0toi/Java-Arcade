@@ -23,14 +23,20 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
 
     public Window() {
         super("CATS 2048");
-        JavaArcade game = new UserPanel(600, 450);
+        setSize(500,500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         board = new Board();
+        add(board);
+        addKeyListener(this);
+        setFocusable(true);
+        setVisible(true);
+        //This makes it so keys can work
         
     }
 
-        public boolean running() {
-            // if (START.BUTTON)
-        }
+    public boolean running() {
+        // if (START.BUTTON)
+    }
 
         /*
          * This method should start your game, it should also set a global boolean value
@@ -38,13 +44,13 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
          * can return the appropriate value
          */
 
-        public void startGame() {
-            score = 0;
+    public void startGame() {
+        score = 0;
             /*
              * static boolean isRunning = running();
              * return isRunning;
              */
-        }
+     }
 
         /* This method should return the name of your game */
     public String getGameName()
@@ -154,7 +160,28 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
 
-        public void keyPressed(KeyEvent e) {}
+        public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();
+            //Used cases bc it works better when doing logic supposedly?
+            switch(key){
+                case KeyEvent.VK_UP:
+                    board.moveUp();
+                    break;
+                case KeyEvent.VK_DOWN:
+                    board.moveDown();
+                    break;
+                case KeyEvent.VK_LEFT:
+                    board.moveLeft();
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    board.moveRight();
+                    break;
+            }
+            // adds block after movement
+            board.addBlock();
+            //Refreshes display to show new numbers
+            board.repaint();
+        }
         public void keyReleased(KeyEvent e) {}
         public void keyTyped(KeyEvent e) {}
 }
