@@ -8,7 +8,7 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
     private String name = "2048 CATS";
     private String author = "Jessie & Lasya";
     private int score;
-    private boolean isRunning;
+    private static boolean isRunning;
     /*
      * public Game() {
      * super("2048 cats");
@@ -35,7 +35,8 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
     }
 
     public boolean running() {
-        // if (START.BUTTON)
+        // if (START.BUTTON) 
+        return false; // for now to fix the error
     }
 
         /*

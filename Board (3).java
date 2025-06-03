@@ -12,6 +12,7 @@ public class Board extends JPanel {
     private boolean canMove;
     private Block[][] grid;
     private final int SIZE = 4;
+    private int score = 0; 
 
     // constructor
     public Board() {
@@ -87,7 +88,7 @@ public class Board extends JPanel {
             for (int row = 3; row >= 0; row--) {
                 Block block = board[row][col];
                 if (!block.isEmpty())
-                    values.add(board[row][column]);
+                    values.add(board[row][col]);
             }
 
             // Merge similar
@@ -95,7 +96,7 @@ public class Board extends JPanel {
             int i = 0;
             while (i < values.size()) {
                 if (i < values.size() - 1 && values.get(i).equals(values.get(i + 1))) {
-                    int mergedVal = values.get(i) * 2;
+                    int mergedVal = values.get(i).getValue() * 2;
                     merged.add(mergedVal);
                     score += mergedVal;
                     i += 2;// Skip the next val
@@ -112,7 +113,7 @@ public class Board extends JPanel {
             }
 
             // 4. Write back bottom to top
-            for (int row = 3, i = 0; row >= 0; row--, i++) {
+            for (int row = 3; row >= 0; row--, i++) {
                 board[row][col].setValue(merged.get(i));
             }
         }
@@ -139,7 +140,7 @@ public class Board extends JPanel {
                     Block mergedBlock = new Block(values.get(i).getValue());
                     mergedBlock.doubleValue();
                     merged.add(mergedBlock);
-                    score += mergedBlock.getValue()
+                    score += mergedBlock.getValue();
                     i += 2;// Skip the next val
                     // Skip the val if they are not equal but keep it on the board
                 } else {
@@ -178,9 +179,8 @@ public class Board extends JPanel {
             while (i < values.size()) {
                 // When the same
                 if (i < values.size() - 1 && values.get(i).getValue() == values.get(i + 1).getValue()) {
-                    Block mergedVal = values.get(i).getValue();
-                    mergedVal.doubleValue();
-                    merged.add(mergedVal);
+                    int mergedVal = values.get(i).getValue();
+                    merged.add(new Block(mergedVal));
                     score += mergedVal;
                     i += 2;// Skip the next val
                     // Skip the val if they are not equal but keep it on the baord
@@ -220,11 +220,11 @@ public class Board extends JPanel {
         return !canMove;
     }
 
-    protected void paintComponent(Graphic g){
+    protected void paintComponent(Graphics g){
         super.paintComponent(g);
         int size = 100;
-        for(int row; row < 4; row++){
-            for(int col; col<4; col++){
+        for(int row = 0; row < 4; row++){
+            for(int col = 0; col<4; col++){
                 int val = board[row][col].getValue();
 
                 if (val == 0) {
