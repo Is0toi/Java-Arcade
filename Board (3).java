@@ -284,39 +284,56 @@ public class Board extends JPanel {
     }
 
     public void addBlock() {
+        //adds empty blocks on the board to an arraylist
         if (hasLost() == false) {
-            int randRow = 0;
-            int randCol = 0;
-            while (board[randRow][randCol].getValue() != 0) {
-                randRow = (int) (Math.random() * 4);
-                randCol = (int) (Math.random() * 4);
+            ArrayList<Point> emptyBlocks = new ArrayList<Point>();
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 4; col++) {
+                    if (board[row][col].getValue() == 0) {
+                        emptyBlocks.add(new Point(row, col));
+                    }
+                }
             }
-            board[randRow][randCol].setValue(2);
+
+            if (!emptyBlocks.isEmpty()) {
+                int randNum = (int) (Math.random() * emptyBlocks.size()); //picks a random block from the empty blocks
+                Point randPoint = emptyBlocks.get(randNum);
+                board[randPoint.x][randPoint.y].setValue(2);
+            }
         }
     }
 
     // checks if user can make any more moves (have they lost?)
     public boolean hasLost() {
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (board[row][col].getValue() == 0) {
+        for (int row = 0; row < 4; row++)
+        {
+            for (int col = 0; col < 4; col++)
+            {
+                if (board[row][col].getValue() == 0)
+                {
                     return false; //if any blocks are empty, user can still move
                 }
             }
         }
         //check if user can move horizontally
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
-                if (board[x][y].getValue() == board[x][y + 1].getValue()) {
+        for (int x = 0; x < 4; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (board[x][y].getValue() == board[x][y + 1].getValue())
+                {
                     return false; //user can merge
                 }
             }
         }
 
         //check if user can move vertically
-        for (int l = 0; l < 4; l++) {
-            for (int m = 0; m < 4; m++) {
-                if (board[l][m].getValue() == board[l + 1][m].getValue()) {
+        for (int l = 0; l < 3; l++)
+        {
+            for (int m = 0; m < 4; m++)
+            {
+                if (board[l][m].getValue() == board[l + 1][m].getValue())
+                {
                     return false; //user can merge
                 }
             }
@@ -344,6 +361,8 @@ public class Board extends JPanel {
         return canMove;
     }
 
+    //loads the image that corresponds to the value of the block
+    //note: images are labelled with the corresponding value.png [ex: 2.png]
     public BufferedImage loadImage(int value) {
         try {
             return ImageIO.read(new File("images/" + value + ".png"));
@@ -351,5 +370,21 @@ public class Board extends JPanel {
         catch (IOException e) {
             return null;
         }
+    }
+
+    public int getCurrentHighestValue() {
+        int currentVal = 2;
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (currentVal < board[row][col].getValue()) {
+                    currentVal = board[row][col].getValue();
+                }
+            }
+        }
+        return currentVal;
+    }
+
+    public int getNextValue() {
+        return 2 * getCurrentHighestValue();
     }
 }

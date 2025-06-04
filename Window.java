@@ -4,16 +4,17 @@ import javax.swing.*;
 
 public class Window extends JFrame implements JavaArcade, MouseListener, KeyListener {
     private Board board;
-    private JPanel boardPanel;
     private String name = "2048 CATS";
     private String author = "Jessie & Lasya";
     private int score;
     private static boolean isRunning;
-    /*
-     * public Game() {
-     * super("2048 cats");
-     * }
-     */
+
+    //label variables
+    private JLabel scoreLabel;
+    private JLabel currentBlock;
+    private JLabel nextBlock;
+    private JLabel currentCatLabel;
+    private JLabel nextCatLabel;
 
     /*
      * This method should return true if your game is in a "start" state, it should
@@ -23,19 +24,58 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
 
     public Window() {
         super("CATS 2048");
-        setSize(500,500);
+        setSize(700,500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         board = new Board();
-        add(board);
-        addKeyListener(this);
-        setFocusable(true);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(board, BorderLayout.CENTER);
+        panel.add(makeSidePanel(), BorderLayout.EAST);
+        add(panel);
+
+
+        board.addKeyListener(this);
+        board.setFocusable(true);
         setVisible(true);
+        board.requestFocusInWindow();
+
         //This makes it so keys can work
-        
+
+    }
+
+    public JPanel makeSidePanel() {
+        JPanel newPanel = new JPanel();
+        newPanel.setPreferredSize(new Dimension(200, 500));
+        newPanel.setBackground(Color.RED);
+
+        //labels
+        scoreLabel = new JLabel("Score: 0");
+        currentBlock = new JLabel("Current Block: 2");
+        nextBlock = new JLabel("Next Block: ");
+
+        //image label (shows the current cat)
+        currentCatLabel = new JLabel(new ImageIcon("images/2.png"));
+        nextCatLabel = new JLabel(new ImageIcon("images/4.png"));
+       /* ImageIcon currentIcon = new ImageIcon("images/2.png");
+        Image currentImage = currentIcon.getImage().getScaledInstance(80,80, Image.SCALE_SMOOTH);
+        currentCatLabel = new JLabel(new ImageIcon(currentImage));
+
+        ImageIcon nextIcon = new ImageIcon("images/4.png");
+        Image nextImage = nextIcon.getImage().getScaledInstance(80,80, Image.SCALE_SMOOTH);
+        nextCatLabel = new JLabel(new ImageIcon(nextImage));*/
+
+        //adding to panel
+        newPanel.add(scoreLabel);
+        newPanel.add(currentBlock);
+        newPanel.add(nextBlock);
+        newPanel.add(currentCatLabel);
+        newPanel.add(nextCatLabel);
+
+        return newPanel;
     }
 
     public boolean running() {
-        // if (START.BUTTON) 
+        // if (START.BUTTON)
         return false; // for now to fix the error
     }
 
@@ -72,11 +112,7 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
 
         /* This method should return your instructions */
         public String getInstructions() {
-            return ("Welcome to Cat's 2048\n This is a little different than normal 2048. THERE ARE " +
-                    "CATS! and moreover there are power ups:\n 1. Duplicate(which can be useful to " +
-                    "duplicate right at 1024)\n 2. Replace (Where you replace a a block with a " +
-                    "number present on the board) \n 3.Undo (Where you can undo a mistake which can " +
-                    "happen twice) \n Overall, there are no rules to 2048 so ultimately have fun! " +
+            return ("Welcome to Cat's 2048\n In this game, instead of numbers, each value is associated with a certain cat! Use  the arrow keys to combine similar looking cats! As the cats combine, the cats get bigger and fatter! (hehehe). Overall, there are no rules to 2048 so ultimately have fun! " +
                     "Bye Bye! (Meow Meow)");
         }
 
@@ -100,7 +136,7 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
         /* This method shoud return the current players number of points */
 
         public int getPoints() {
-            return 0;
+            return board.getScore();
 
         } // add to spec
 
@@ -120,39 +156,13 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
         }
 
         public static void main(String[] args) {
-            JFrame frameInstruc = new JFrame("2048 CATS hehe");
-            frameInstruc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frameInstruc.setSize(300, 200);
-            frameInstruc.setVisible(true);
             JOptionPane.showMessageDialog(
-                    frameInstruc,
-                    "Welcome to Cat's 2048\n This is a little different than normal 2048. THERE ARE " +
-                            "CATS! and moreover there are power ups:\n 1. Duplicate(which can be useful to " +
-                            "duplicate right at 1024)\n 2. Replace (Where you replace a a block with a number " +
-                            "present on the board) \n 3.Undo (Where you can undo a mistake which can happen " +
-                            "twice) \n Overall, there are no rules to 2048 so ultimately have fun! Bye Bye! " +
-                            "(Meow Meow)",
+                    null,
+                    "Welcome to Cat's 2048\n In this game, instead of numbers, each value is associated with a certain cat! Use the arrow keys to combine similar looking cats! As the cats combine, the cats get bigger and fatter! (hehehe)Overall, there are no rules to 2048 so ultimately have fun! " +
+                    "Bye Bye! (Meow Meow)",
                     "Instructions", JOptionPane.INFORMATION_MESSAGE);
 
-            JFrame frame = new JFrame("2048 CATS!!");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1000, 1000);
-
-            Window panel = new Window();
-            // frame.add(panel);
-            frame.setVisible(true);
-
-            isRunning = false;
-            JButton startButton = new JButton("Start Game");
-            startButton.setBounds(100, 100, 15, 15);
-
-            /*
-             * JTextField txtfld = new JTextField(20);
-             * txtfld.addKeyListener(this);
-             * add(txtfld);
-             */
-
-            frame.add(panel);
+            new Window();
         }
 
         public void mouseClicked(MouseEvent e) {}
@@ -164,6 +174,7 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
             //Used cases bc it works better when doing logic supposedly?
+            //ADD CASES FOR WASD 
             switch(key){
                 case KeyEvent.VK_UP:
                     board.moveUp();
@@ -178,9 +189,21 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
                     board.moveRight();
                     break;
             }
+
             // adds block after movement
-            board.addBlock();
+            if (board.getCanMove())
+                board.addBlock();
+
+            //update labels!!
+            scoreLabel.setText("Score: " + board.getScore());
+            currentBlock.setText("Highest Block: " + board.getCurrentHighestValue());
+            nextBlock.setText("Next Block: " + board.getNextValue());
+            currentCatLabel.setIcon(new ImageIcon("images/" + board.getCurrentHighestValue() + ".png"));
+            nextCatLabel.setIcon(new ImageIcon("images/" + board.getNextValue() + ".png"));
+
             //Refreshes display to show new numbers
+            if (board.hasLost())
+                JOptionPane.showMessageDialog(null, "Game Over! Final Score: " + board.getScore());
             board.repaint();
         }
         public void keyReleased(KeyEvent e) {}

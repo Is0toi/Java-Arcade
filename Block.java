@@ -7,6 +7,7 @@ import java.io.*; // File, IOException
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+
 public class Block extends JPanel {
     private int value;
 
