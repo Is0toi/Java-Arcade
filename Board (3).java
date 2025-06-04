@@ -10,16 +10,49 @@ import java.util.ArrayList;
 public class Board extends JPanel {
     private Block[][] board;
     private boolean canMove;
-    private Block[][] grid;
-    private final int SIZE = 4;
-    private int score = 0; 
+    private int score;
+
+    //paint component
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        //dimensions for the tile size & spacing between tiles
+        int tileSize = 100;
+        int spacing = 10;
+
+        //creating the tiles
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                Block block = board[row][col];
+                int x = col * (tileSize + spacing);
+                int y = row * (tileSize + spacing);
+
+                //set the image of the block based on value
+                if (block.getValue() != 0) {
+                    BufferedImage image = loadImage(block.getValue());
+                    if (image != null)
+                    {
+                        g.drawImage(image, x, y, tileSize, tileSize, null);
+                    }
+                }
+                else
+                {
+                    g.setColor(Color.LIGHT_GRAY);
+                    g.fillRect(x, y, tileSize, tileSize);
+                }
+            }
+        }
+    }
 
     // constructor
     public Board() {
         // initializes the board
+        score = 0;
         board = new Block[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
                 board[i][j] = new Block();
             }
         }
@@ -27,26 +60,44 @@ public class Board extends JPanel {
         int randomRow1 = (int) (Math.random() * 4);
         int randomCol1 = (int) (Math.random() * 4);
 
-        board[randomRow1][randomCol1].setValue(2);
+        getBlock(randomRow1, randomCol1).setValue(2);
 
         // ensures that the second block is NOT placed in the same location as the first
         int randomRow2 = randomRow1;
         int randomCol2 = randomCol1;
-        while (randomRow1 == randomRow2 && randomCol1 == randomCol2) {
+        while (randomRow1 == randomRow2 && randomCol1 == randomCol2)
+        {
             randomRow2 = (int) (Math.random() * 4);
             randomCol2 = (int) (Math.random() * 4);
         }
-        board[randomRow2][randomCol2].setValue(2);
+        getBlock(randomRow2, randomCol2).setValue(2);
         canMove = true;
     }
 
+    //returns score
+    public int getScore() {
+        return score;
+    }
+
+    //returns Block
+    public Block getBlock(int row, int col) {
+        return board[row][col];
+    }
+
     public void moveUp() {
+        //copy current board into oldBoard
+        int[][] oldBoard = new int[4][4];
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                oldBoard[r][c] = board[r][c].getValue();
+            }
+        }
         for (int col = 0; col < 4; col++) {
             ArrayList<Block> values = new ArrayList<>();
 
             //Read top to bottom: Removes all 0's off the board so that everything will be on the left
             for (int row = 0; row < 4; row++) {
-                Block block = board[row][col];
+                Block block = getBlock(row, col);
                 if (!block.isEmpty())
                     values.add(new Block(block.getValue()));
             }
@@ -78,9 +129,17 @@ public class Board extends JPanel {
                 board[row][col].setValue(merged.get(row).getValue());
             }
         }
+        canMove = boardChanged(oldBoard);
     }
 
     public void moveDown() {
+        //copy current board into oldBoard
+        int[][] oldBoard = new int[4][4];
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                oldBoard[r][c] = board[r][c].getValue();
+            }
+        }
         for (int col = 0; col < 4; col++) {
             ArrayList<Block> values = new ArrayList<>();
 
@@ -88,38 +147,48 @@ public class Board extends JPanel {
             for (int row = 3; row >= 0; row--) {
                 Block block = board[row][col];
                 if (!block.isEmpty())
-                    values.add(board[row][col]);
+                    values.add(new Block(block.getValue()));
             }
 
             // Merge similar
-            ArrayList<Integer> merged = new ArrayList<>();
+            ArrayList<Block> merged = new ArrayList<>();
             int i = 0;
             while (i < values.size()) {
-                if (i < values.size() - 1 && values.get(i).equals(values.get(i + 1))) {
-                    int mergedVal = values.get(i).getValue() * 2;
-                    merged.add(mergedVal);
-                    score += mergedVal;
+                if (i < values.size() - 1 && values.get(i).getValue() == values.get(i + 1).getValue()) {
+                    Block mergedBlock = new Block(values.get(i).getValue());
+                    mergedBlock.doubleValue();
+                    merged.add(mergedBlock);
+                    score += mergedBlock.getValue();
                     i += 2;// Skip the next val
                 // Skip the val if they are not equal but keep it on the board
                 } else {
-                    merged.add(values.get(i));
+                    merged.add(new Block(values.get(i).getValue()));
                     i++;
                 }
             }
 
             // 3. Pad with 0s at the top
             while (merged.size() < 4) {
-                merged.add(0, 0);
+                merged.add(new Block());
             }
 
             // 4. Write back bottom to top
-            for (int row = 3; row >= 0; row--, i++) {
-                board[row][col].setValue(merged.get(i));
+            for (int x = 0; x < 4; x++) {
+                board[3 - x][col].setValue(merged.get(x).getValue());
             }
         }
+        //update canMove
+        canMove = boardChanged(oldBoard);
     }
 
     public void moveLeft() {
+        //copy current board into oldBoard
+        int[][] oldBoard = new int[4][4];
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                oldBoard[r][c] = board[r][c].getValue();
+            }
+        }
         for (int row = 0; row < 4; row++) {
             ArrayList<Block> values = new ArrayList<>();
 
@@ -159,9 +228,18 @@ public class Board extends JPanel {
                 board[row][col].setValue(merged.get(col).getValue());
             }
         }
+        canMove = boardChanged(oldBoard);
     }
 
     public void moveRight() {
+        //copy current board into old board
+        int[][] oldBoard = new int[4][4];
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                oldBoard[r][c] = board[r][c].getValue();
+            }
+        }
+
         for (int row = 0; row < 4; row++) {
             ArrayList<Block> values = new ArrayList<>();
 
@@ -179,9 +257,10 @@ public class Board extends JPanel {
             while (i < values.size()) {
                 // When the same
                 if (i < values.size() - 1 && values.get(i).getValue() == values.get(i + 1).getValue()) {
-                    int mergedVal = values.get(i).getValue();
-                    merged.add(new Block(mergedVal));
-                    score += mergedVal;
+                    Block mergedBlock = new Block(values.get(i).getValue());
+                    mergedBlock.doubleValue();
+                    merged.add(mergedBlock);
+                    score += mergedBlock.getValue();
                     i += 2;// Skip the next val
                     // Skip the val if they are not equal but keep it on the baord
                 } else {
@@ -196,10 +275,12 @@ public class Board extends JPanel {
             }
 
             // update the board
-            for (int col = 3; col >= 0; col--) {
-                board[row][col].setValue(merged.get(col).getValue());
+            for (int x = 0; x < 4; x++) {
+                board[row][3 - x].setValue(merged.get(x).getValue());
             }
         }
+        //update canMove
+        canMove = boardChanged(oldBoard);
     }
 
     public void addBlock() {
@@ -214,33 +295,61 @@ public class Board extends JPanel {
         }
     }
 
-    // uses the boolean variable canMove to see if the user can make any more moves
-    // if they can move, returns false. if they can't move, returns true
+    // checks if user can make any more moves (have they lost?)
     public boolean hasLost() {
-        return !canMove;
-    }
-
-    protected void paintComponent(Graphics g){
-        super.paintComponent(g);
-        int size = 100;
-        for(int row = 0; row < 4; row++){
-            for(int col = 0; col<4; col++){
-                int val = board[row][col].getValue();
-
-                if (val == 0) {
-                g.setColor(Color.LIGHT_GRAY);
-                } else {
-                g.setColor(Color.ORANGE);
-                }
-                g.fillRect(col * size, row * size, size - 5, size - 5);
-
-                //Now do the number color
-                g.setColor(Color.BLACK);
-                    if (val != 0) {
-                g.drawString(String.valueOf(val), col * size + 40, row * size + 50);
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (board[row][col].getValue() == 0) {
+                    return false; //if any blocks are empty, user can still move
                 }
             }
         }
+        //check if user can move horizontally
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                if (board[x][y].getValue() == board[x][y + 1].getValue()) {
+                    return false; //user can merge
+                }
+            }
+        }
+
+        //check if user can move vertically
+        for (int l = 0; l < 4; l++) {
+            for (int m = 0; m < 4; m++) {
+                if (board[l][m].getValue() == board[l + 1][m].getValue()) {
+                    return false; //user can merge
+                }
+            }
+        }
+
+        //user has no more moves left
+        return true;
     }
-    
+
+    public boolean boardChanged(int[][] oldBoard) {
+        for (int row = 0; row < 4; row++)
+        {
+            for (int col = 0; col < 4; col++)
+            {
+                if (board[row][col].getValue() != oldBoard[row][col])
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean getCanMove() {
+        return canMove;
+    }
+
+    public BufferedImage loadImage(int value) {
+        try {
+            return ImageIO.read(new File("images/" + value + ".png"));
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
 }
