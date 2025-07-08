@@ -112,7 +112,7 @@ public class Window extends JFrame implements JavaArcade, MouseListener, KeyList
 
         /* This method should return your instructions */
         public String getInstructions() {
-            return ("Welcome to Cat's 2048\n In this game, instead of numbers, each value is associated with a certain cat! Use  the arrow keys to combine similar looking cats! As the cats combine, the cats get bigger and fatter! (hehehe). Overall, there are no rules to 2048 so ultimately have fun! " +
+            return ("Welcome to Cat's 2048\n In this game, instead of numbers, each value is associated with a certain cat!\n Use  the arrow keys to combine similar looking cats! As the cats combine, the cats get bigger and fatter! (hehehe).\n Overall, there are no rules to 2048 so ultimately have fun! " +
                     "Bye Bye! (Meow Meow)");
         }
 
